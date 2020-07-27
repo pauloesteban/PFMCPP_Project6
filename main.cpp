@@ -56,78 +56,117 @@ Purpose:  This project will show you the difference between member functions and
 #include <string>
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(int v, const char* n)   //1
+    : value( v ),//2
+      name( n )//3
+    {
+        
+    }
+    
+    int value;
+    std::string name;
 };
 
-struct <#structName1#>                                //4
+struct TComparator                                //4
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b) //5
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if( a != nullptr && b != nullptr )
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
+        
         return nullptr;
     }
 };
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float voltageNodeA { 0 }, voltageNodeB { 0 };
+    float voltageUpdater( float* updatedVoltage )      //12
     {
+        if( updatedVoltage != nullptr )
+        {
+            std::cout << "U's voltageNodeA value: " << this->voltageNodeA << std::endl;
+            this->voltageNodeA = *updatedVoltage;
+            std::cout << "U's voltageNodeA updated value: " << this->voltageNodeA << std::endl;
+            while( std::abs(this->voltageNodeB - this->voltageNodeA) > 0.001f )
+            {
+                /*
+                 write something that makes the distance between that->voltageNodeB and that->voltageNodeA get smaller
+                 */
+                this->voltageNodeB += 0.9f * ( this->voltageNodeA - this->voltageNodeB );
+            }
+            std::cout << "U's voltageNodeB updated value: " << this->voltageNodeB << std::endl;
+            return this->voltageNodeB * this->voltageNodeA;
+        }
         
+        return 0.0f;
     }
 };
 
-struct <#structname2#>
+struct UCalculator
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float voltageUpdater(U* that, float* updatedVoltage )        //10
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        if( that != nullptr && updatedVoltage != nullptr )
         {
-            /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-             */
-            that-><#name2#> += ;
+            std::cout << "U's voltageNodeA value: " << that->voltageNodeA << std::endl;
+            that->voltageNodeA = *updatedVoltage;
+            std::cout << "U's voltageNodeA updated value: " << that->voltageNodeA << std::endl;
+            while( std::abs(that->voltageNodeB - that->voltageNodeA) > 0.001f )
+            {
+                /*
+                 write something that makes the distance between that->voltageNodeB and that->voltageNodeA get smaller
+                 */
+                that->voltageNodeB += 0.9f * ( that->voltageNodeA - that->voltageNodeB );
+            }
+            std::cout << "U's voltageNodeB updated value: " << that->voltageNodeB << std::endl;
+            return that->voltageNodeB * that->voltageNodeA;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        
+        return 0.0f;
     }
 };
-        
+
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
-
+ 
  Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
  
- If you didn't already: 
-    Make a pull request after you make your first commit
-    pin the pull request link and this repl.it link to our DM thread in a single message.
-
+ If you didn't already:
+ Make a pull request after you make your first commit
+ pin the pull request link and this repl.it link to our DM thread in a single message.
+ 
  send me a DM to review your pull request when the project is ready for review.
-
+ 
  Wait for my code review.
  */
 
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    T student( 4, "Paulo" );                                             //6
+    T senior( 55, "Jeremy" );                                             //6
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    TComparator f;                                            //7
+    auto* smaller = f.compare( &student, &senior );                              //8
     
-    U <#name3#>;
+    if( smaller != nullptr )
+    {
+        std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    }
+    else
+    {
+        std::cout << "Sorry, you have a null pointer!" << std::endl;
+    }
+    
+    U circuit1;
     float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
+    std::cout << "[static func] circuit1's multiplied values: " << UCalculator::voltageUpdater( &circuit1, &updatedValue ) << std::endl;                  //11
     
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
+    U circuit2;
+    std::cout << "[member func] circuit2's multiplied values: " << circuit2.voltageUpdater( &updatedValue ) << std::endl;
 }
 
         
